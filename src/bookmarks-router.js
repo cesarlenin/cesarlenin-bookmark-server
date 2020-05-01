@@ -3,6 +3,7 @@ const { v4 : uuid} = require('uuid');
 const logger = require('./logger');
 const { bookmarks }= require('./store');
 const { PORT} = require('./config');
+const store = require('./store');
 
 const bookmarksRouter = express.Router();
 const bodyParser = express.json();
@@ -25,19 +26,19 @@ bookmarksRouter
 
     if (!title) {
       logger.error('title is required');
-      return res.status(400);
+      return res.status(400).send('title is required');
     }
     if (!url) {
       logger.error('url is required');
-      return res.status(400);
+      return res.status(400).send('url is required');
     }
     if (!description) {
       logger.error('description is required');
-      return res.status(400);
+      return res.status(400).send('description is required');
     }
     if (!rating || !Number.isInteger(Number(rating))) {
       logger.error('rating needs to be a number');
-      return res.status(400);
+      return res.status(400).send('rating needs to be a number');
     } 
 
     const id = uuid();
@@ -56,9 +57,21 @@ bookmarksRouter
       .json(newBookmarks);
   });
 
-// bookmarksRouter
-//   .route('/:id')
-//   .get((req, res) => {/* code not shown */})
-//   .delete((req, res) => {/* code not shown */});
+bookmarksRouter
+  .route('/:id')
+  .get((req, res) => {
+    const { id } = req.params;
+    const bookmark = store.bookmarks.find(e => e.id === id);
+    
+    if (!bookmark) {
+      logger.error('bookmark was not found');
+      return res.status(400).send('bookmark was not found');
+    }
+
+    res.json(bookmark);
+  })
+  .delete((req, res) => {
+    /* code not shown */
+  });
   
 module.exports = bookmarksRouter;
