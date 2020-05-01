@@ -71,7 +71,19 @@ bookmarksRouter
     res.json(bookmark);
   })
   .delete((req, res) => {
-    /* code not shown */
+    const { id } = req.params;
+  
+    const index = store.bookmarks.findIndex(e=>e.id===id);
+  
+    if(index=== -1){
+      logger.info('Bookmark not found');
+      return res.status(404).send('Bookmark not found');
+    }
+  
+    store.bookmarks.splice(index,1);
+
+    logger.info('Bookmark was deleted.');
+    res.send('deleted');
   });
   
 module.exports = bookmarksRouter;
