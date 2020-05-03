@@ -15,7 +15,7 @@ bookmarksRouter
   })
   .post(bodyParser,(req, res) => {
 
-    console.log(req.body);
+
 
     const {
       title,
